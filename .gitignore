@@ -27,3 +27,6 @@ dist/
 
 # macOS
 .DS_Store
+
+# databases
+*.db
