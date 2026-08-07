@@ -4,11 +4,12 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
+import aiosqlite
 
 from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, ROLE_NAMES, CHANNEL_IDS
 from caller.caller_contants import (
     PS_OPTIONS, COOLDOWN, GAMBLING_PERMS_CHANNELS, SHARED_CHANNEL_CHOICES,
-    ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_PING__BADGES, ROLES_WITH_PERMS_TO_PING__SHOP_RESET, ROLES_WITH_PERMS_TO_PING__GIVEAWAY, ROLES_WITH_PERMS_TO_PING__LEAK, ROLES_WITH_PERMS_TO_PING__TOURNAMENT, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO_PING__CHALLENGE,
+    ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_PING__BADGES, ROLES_WITH_PERMS_TO_PING__SHOP_RESET, ROLES_WITH_PERMS_TO_PING__GIVEAWAY, ROLES_WITH_PERMS_TO_PING__LEAK, ROLES_WITH_PERMS_TO_PING__TOURNAMENT, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO_PING__CHALLENGE, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS,
     PING_CATEGORIES,
     PATTERN_W1, PATTERN_W2,
     BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE
@@ -17,6 +18,16 @@ from caller.caller_contants import (
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
+
+async def setup_db():
+        async with aiosqlite.connect("activity.db") as db:
+            await db.execute('''
+                CREATE TABLE IF NOT EXISTS inactives (
+                    user_id INTEGER PRIMARY KEY,
+                    reason TEXT
+                )
+            ''')
+            await db.commit()
 
 
 class Client (commands.Bot):
@@ -30,6 +41,7 @@ class Client (commands.Bot):
         self.gamble_cooldown = commands.CooldownMapping.from_cooldown(1, COOLDOWN, commands.BucketType.user)
 
     async def on_ready(self):
+        await setup_db()
         print(f'Logged on as {self.user}')
         try:
             synced = await self.tree.sync(guild=GUILD_INFO["GUILD"])
@@ -67,25 +79,24 @@ class Client (commands.Bot):
         perms_channel = message.author.guild.get_channel(CHANNEL_IDS["PERMS_CHANNEL"])
         if perms_channel:
             if message.channel.id in GAMBLING_PERMS_CHANNELS:
+                user_roles = [role.id for role in message.author.roles]
+                can_bypass_delete = any(role_id in ROLES_WITH_PERMS_TO__ASK_FOR_PERMS for role_id in user_roles)
+
                 if num_words == 1:
                     # Regra: Se tem 1 palavra, tem de estar na words1
                     if PATTERN_W1.search(content):
                         print(f"{message.author.mention} asked for perms: {content}")
-                        await message.delete()
-                        if perms_channel:
-                            await perms_channel.send(f"{message.author.mention} asked for perms!\nGambling ......\nNo")
-                        else:
-                            print("E: No perms_channel")
+                        if not can_bypass_delete:
+                            await message.delete()
+                        await perms_channel.send(f"{message.author.mention} asked for perms!\nGambling ......\nNo")
                     
                 elif num_words > 1:
                     # Regra: Se tem > 1 palavra, precisa de uma da words1 E uma da words2
                     if PATTERN_W1.search(content) and PATTERN_W2.search(content):
                         print(f"{message.author.mention} asked for perms: {content}")
-                        await message.delete()
-                        if perms_channel:
-                            await perms_channel.send(f"{message.author.mention} asked for perms!\nGambling ......\nNo")
-                        else:
-                            print("E: No perms_channel")
+                        if not can_bypass_delete:
+                            await message.delete()
+                        await perms_channel.send(f"{message.author.mention} asked for perms!\nGambling ......\nNo")
 
             if content.startswith("1/10"):
                 if perms_channel:
@@ -99,15 +110,25 @@ class Client (commands.Bot):
                 if not resting_role:
                     print("Err: No resting role")
                     return
+                
                 mentioned_inactives = []
-                for user in message.mentions:
-                    if isinstance(user, discord.Member) and resting_role in user.roles:
-                        mentioned_inactives.append(user.display_name)
+                reasons = []
+                async with aiosqlite.connect("activity.db") as db:
+                    for user in message.mentions:
+                        if isinstance(user, discord.Member) and resting_role in user.roles:
+                            async with db.execute("SELECT reason FROM inactives WHERE user_id = ?", (user.id,)) as cursor:
+                                row = await cursor.fetchone()
+                                reason = row[0] if row else "No reason"
+                                mentioned_inactives.append(user.display_name)
+                                reasons.append(reason)
                 if len(mentioned_inactives) == 1:
-                    await message.reply(f"**Sorry, {mentioned_inactives[0]} is inactive 😴!**\nIt means {mentioned_inactives[0]} is not available right now and probably won't respond anytime soon :/")
+                    if reasons[0] == "No reason":
+                        await message.reply(f"**Sorry, {mentioned_inactives[0]} is inactive 😴! **")
+                    else:
+                        await message.reply(f"**Sorry, {mentioned_inactives[0]} is inactive 😴! Reason: {reasons[0]}**")
                 elif len(mentioned_inactives) > 1:
                     names = ", ".join(mentioned_inactives[:-1]) + f" and {mentioned_inactives[-1]}"
-                    await message.reply(f"**Sorry, {names} are inactive 😴!**\nIt means {names} are not available right now and they probably won't respond anytime soon :/")
+                    await message.reply(f"**Sorry, {names} are inactive 😴!**")
 
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
@@ -194,8 +215,10 @@ async def ping(interaction: discord.Interaction, role: str):
 """
 
 class SetActivity(discord.ui.View):
-    def __init__(self):
+    def __init__(self, reason: str):
         super().__init__(timeout=60)
+        self.reason = reason if reason else "No reason"
+        
 
     @discord.ui.button(label=BUTTON_ACTIVITY_ACTIVE["label"], style=BUTTON_ACTIVITY_ACTIVE["style"], custom_id=BUTTON_ACTIVITY_ACTIVE["cid"])
     async def btn_activity_active(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -205,6 +228,10 @@ class SetActivity(discord.ui.View):
             return
         if resting_role in interaction.user.roles:
             await interaction.user.remove_roles(resting_role)
+
+        async with aiosqlite.connect("activity.db") as db:
+            await db.execute("DELETE FROM inactives WHERE user_id = ?", (interaction.user.id,))
+            await db.commit()
 
         for child in self.children:
             child.disabled = True
@@ -227,22 +254,37 @@ class SetActivity(discord.ui.View):
         if resting_role not in interaction.user.roles:
             await interaction.user.add_roles(resting_role)
 
+        async with aiosqlite.connect("activity.db") as db:
+            await db.execute("REPLACE INTO inactives (user_id, reason) VALUES (?, ?)", (interaction.user.id, self.reason))
+            await db.commit()
+
         for child in self.children:
             child.disabled = True
 
-        await interaction.response.edit_message(
-            content = f"✅ Done. You're inactive",
-            view=self
-        )
+        if self.reason == "No reason":
+            await interaction.response.edit_message(
+                content = f"✅ Done. You're inactive",
+                view=self
+            )
+        else:
+            await interaction.response.edit_message(
+                content = f"✅ Done. You're inactive. Reason saved: {self.reason}",
+                view=self
+            )
 
         staff_chat = interaction.guild.get_channel(CHANNEL_IDS.get("STAFF_CHANNEL"))
-        if staff_chat:
+        if not staff_chat:
+            print ("Err - Could not find Staff Chat")
+            return
+        if self.reason == "No reason":
             await staff_chat.send(f"{interaction.user.mention} is inactive")
+        else:
+            await staff_chat.send(f"{interaction.user.mention} is inactive. Reason: {self.reason}")
 
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__ACTIVITY)
 @client.tree.command(name="activity", description="If you are a staff member, use me to declare yourself active or inactive", guild=GUILD_INFO["GUILD"])
-async def activity (interaction: discord.Interaction):
-    view = SetActivity()
+async def activity (interaction: discord.Interaction, reason: str = None):
+    view = SetActivity(reason)
     await interaction.response.send_message(f"Press the button that best suits your purpose", view=view, ephemeral=True)
 
 """
@@ -273,3 +315,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    ROLES_WITH_PERMS_TO__ASK_FOR_PERMS
