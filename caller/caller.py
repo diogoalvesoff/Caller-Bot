@@ -133,10 +133,12 @@ class Client (commands.Bot):
             if lower_content.startswith("hug "):
                 user = message.mentions[0]
                 print (f"{message.author.display_name} hugged {user.display_name}")
+                message.delete()
                 await message.channel.send(f"🤗 {message.author.mention} hugged {user.mention}")
             if lower_content.startswith("handshake "):
                 user = message.mentions[0]
                 print (f"{message.author.display_name} shook hands with {user.display_name}")
+                message.delete()
                 await message.channel.send(f"🤝 {message.author.mention} shook hands with {user.mention}")
 
     async def on_command_error(self, ctx, error):
