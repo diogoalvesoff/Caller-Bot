@@ -226,7 +226,7 @@ async def ping(interaction: discord.Interaction, role: str):
 class SetActivity(discord.ui.View):
     def __init__(self, reason: str):
         super().__init__(timeout=60)
-        self.reason = reason if reason else "No reason"
+        self.reason = reason.replace("@", "") if reason else "No reason"
         
 
     @discord.ui.button(label=BUTTON_ACTIVITY_ACTIVE["label"], style=BUTTON_ACTIVITY_ACTIVE["style"], custom_id=BUTTON_ACTIVITY_ACTIVE["cid"])
