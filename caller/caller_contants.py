@@ -27,6 +27,7 @@ SHARED_CHANNEL_CHOICES = [
     app_commands.Choice(name=CHANNEL_NAMES["FLEXING_CHANNEL"], value="FLEXING_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["MEMES_CHANNEL"], value="MEMES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["COUNTING_CHANNEL"], value="COUNTING_CHANNEL"),
+    app_commands.Choice(name=CHANNEL_NAMES["ARQUIVES_CHANNEL"], value="ARQUIVES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["HOTEL_HELL_CHANNEL"], value="HOTEL_HELL_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["A_HARD_PLACE_CHANNEL"], value="A_HARD_PLACE_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["A_1000_CHANNEL"], value="A_1000_CHANNEL"),
@@ -106,7 +107,7 @@ ROLES_WITH_PERMS_TO__USE_TALK = [
 PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__BADGES,
-        "options": ["hh", "ahp", "a", "r", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
+        "options": ["ar", "hh", "ahp", "a", "r", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__SHOP_RESET,

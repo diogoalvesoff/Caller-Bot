@@ -28,6 +28,7 @@ ROLE_IDS = {
     "CHALLENGE_MANAGER_ROLE_ID" : 1480773783974449295,
     "STAFF_TEAM_ROLE_ID" : 1479986763534700807,
     "RESTING_ROLE_ID" : 1512632251517763604,
+    "archives": 1537602342986321920, "ar": 1537602342986321920,
     "hotel hell": 1480063127864475832, "hotelhell": 1480063127864475832, "hh": 1480063127864475832,
     "a hard place": 1480065104958455970, "ahardplace": 1480065104958455970, "ahp": 1480065104958455970,
     "a-1000": 1480065693973221489, "a1000": 1480065693973221489, "a 1000": 1480065693973221489, "a": 1480065693973221489,
@@ -52,6 +53,7 @@ ROLE_IDS = {
 }
 
 ROLE_NAMES = {
+    "archives": "📚 | Arquives ᵖⁱⁿᵍ", "ar": "📚 | Arquives ᵖⁱⁿᵍ",
     "hotel hell": "👹 | HH ᵖⁱⁿᵍ", "hotelhell": "👹 | HH ᵖⁱⁿᵍ", "hh": "👹 | HH ᵖⁱⁿᵍ",
     "a hard place": "🪨 | AHP ᵖⁱⁿᵍ", "ahardplace": "🪨 | AHP ᵖⁱⁿᵍ", "ahp": "🪨 | AHP ᵖⁱⁿᵍ",
     "a-1000": "🛑 | A-1000 ᵖⁱⁿᵍ", "a1000": "🛑 | A-1000 ᵖⁱⁿᵍ", "a 1000": "🛑 | A-1000 ᵖⁱⁿᵍ", "a": "🛑 | A-1000 ᵖⁱⁿᵍ",
@@ -92,7 +94,8 @@ CHANNEL_IDS = {
     "FLEXING_CHANNEL": 1479895864913821837,
     "MEMES_CHANNEL": 1497420183235592243,
     "COUNTING_CHANNEL": 1479897597962489957,
-    "BOT_COMMANDS_CHANNEL": 1533106374844612759, 
+    "BOT_COMMANDS_CHANNEL": 1533106374844612759,
+    "ARQUIVES_CHANNEL": 1537602193539207228,
     "HOTEL_HELL_CHANNEL": 1486613677049384960,
     "A_HARD_PLACE_CHANNEL": 1486613408634900600,
     "A_1000_CHANNEL": 1486613863062310913,
@@ -125,6 +128,7 @@ CHANNEL_NAMES = {
     "MEMES_CHANNEL": "😂・memeesssssssss",
     "COUNTING_CHANNEL": "🔢・counting-till-archives",
     "BOT_COMMANDS_CHANNEL": "🤖・bot-commands",
+    "ARQUIVES_CHANNEL": "📚・archives",
     "HOTEL_HELL_CHANNEL": "👹・hotel-hell",
     "A_HARD_PLACE_CHANNEL": "🪨・a-hard-place",
     "A_1000_CHANNEL": "🛑・a-1000",
