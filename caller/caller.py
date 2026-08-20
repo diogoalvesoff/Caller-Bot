@@ -8,7 +8,7 @@ import aiosqlite
 
 from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, ROLE_NAMES, CHANNEL_IDS
 from caller.caller_contants import (
-    PS_OPTIONS, COOLDOWN, GAMBLING_PERMS_CHANNELS, SHARED_CHANNEL_CHOICES,
+    PS_OPTIONS, COOLDOWN, MIN_INACTIVITY_TIME, GAMBLING_PERMS_CHANNELS, SHARED_CHANNEL_CHOICES,
     ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_PING__BADGES, ROLES_WITH_PERMS_TO_PING__SHOP_RESET, ROLES_WITH_PERMS_TO_PING__GIVEAWAY, ROLES_WITH_PERMS_TO_PING__LEAK, ROLES_WITH_PERMS_TO_PING__TOURNAMENT, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO_PING__CHALLENGE, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS,
     PING_CATEGORIES,
     PATTERN_W1, PATTERN_W2,
@@ -39,6 +39,7 @@ class Client (commands.Bot):
         intents.members = True                                      # lets assign roles to users
         super().__init__(command_prefix="!", intents=intents)
         self.gamble_cooldown = commands.CooldownMapping.from_cooldown(1, COOLDOWN, commands.BucketType.user)
+        self.last_active_times = {}                                 # Stored the last time inactive users talked
 
     async def on_ready(self):
         await setup_db()
@@ -52,6 +53,11 @@ class Client (commands.Bot):
     async def on_message(self, message: discord.Message):
         if message.author.bot:
             return
+
+        if message.guild:
+            resting_role = message.guild.get_role(ROLE_IDS["RESTING_ROLE_ID"])
+            if resting_role and resting_role in message.author.roles:
+                self.last_active_times[message.author.id] = message.created_at.timestamp()
 
         bucket = self.gamble_cooldown.get_bucket(message)
         retry_after = bucket.update_rate_limit()
@@ -117,10 +123,12 @@ class Client (commands.Bot):
                     for user in message.mentions:
                         if isinstance(user, discord.Member) and resting_role in user.roles:
                             async with db.execute("SELECT reason FROM inactives WHERE user_id = ?", (user.id,)) as cursor:
-                                row = await cursor.fetchone()
-                                reason = row[0] if row else "No reason"
-                                mentioned_inactives.append(user.display_name)
-                                reasons.append(reason)
+                                time_inactive_user_sent_last_message = self.last_active_times.get(user.id, message.created_at.timestamp() - (MIN_INACTIVITY_TIME * 2))
+                                if message.created_at.timestamp() - time_inactive_user_sent_last_message > MIN_INACTIVITY_TIME:
+                                    row = await cursor.fetchone()
+                                    reason = row[0] if row else "No reason"
+                                    mentioned_inactives.append(user.display_name)
+                                    reasons.append(reason)
                 if len(mentioned_inactives) == 1:
                     if reasons[0] == "No reason":
                         await message.reply(f"**Sorry, {mentioned_inactives[0]} is inactive 😴! **")
