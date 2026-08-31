@@ -108,7 +108,7 @@ ROLES_WITH_PERMS_TO__USE_TALK = [
 PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__BADGES,
-        "options": ["ar", "S", "hh", "ahp", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
+        "options": ["ar", "s", "hh", "ahp", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__SHOP_RESET,
