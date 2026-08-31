@@ -32,14 +32,14 @@ SHARED_CHANNEL_CHOICES = [
     app_commands.Choice(name=CHANNEL_NAMES["STAIRWELL_CHANNEL"], value="STAIRWELL_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["HOTEL_HELL_CHANNEL"], value="HOTEL_HELL_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["A_HARD_PLACE_CHANNEL"], value="A_HARD_PLACE_CHANNEL"),
+    app_commands.Choice(name=CHANNEL_NAMES["VISION_BADGES_CHANNEL"], value="VISION_BADGES_CHANNEL"),
+    app_commands.Choice(name=CHANNEL_NAMES["ITEM_BADGES_CHANNEL"], value="ITEM_BADGES_CHANNEL"),
+    app_commands.Choice(name=CHANNEL_NAMES["CRUCIFIX_BADGES_CHANNEL"], value="CRUCIFIX_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["HOTEL_BADGES_CHANNEL"], value="HOTEL_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["MINES_BADGES_CHANNEL"], value="MINES_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["OUTDOORS_BADGES_CHANNEL"], value="OUTDOORS_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["BACKDOORS_BADGES_CHANNEL"], value="BACKDOORS_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["BATTLE_MODE_BADGES_CHANNEL"], value="BATTLE_MODE_BADGES_CHANNEL"),
-    app_commands.Choice(name=CHANNEL_NAMES["ITEM_BADGES_CHANNEL"], value="ITEM_BADGES_CHANNEL"),
-    app_commands.Choice(name=CHANNEL_NAMES["CRUCIFIX_BADGES_CHANNEL"], value="CRUCIFIX_BADGES_CHANNEL"),
-    app_commands.Choice(name=CHANNEL_NAMES["VISION_BADGES_CHANNEL"], value="VISION_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["COLLAB_BADGES_CHANNEL"], value="COLLAB_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["FANGAME_BADGES_CHANNEL"], value="FANGAME_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["KNOB_GRIND_CHANNEL"], value="KNOB_GRIND_CHANNEL"),
@@ -108,7 +108,7 @@ ROLES_WITH_PERMS_TO__USE_TALK = [
 PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__BADGES,
-        "options": ["ar", "s", "hh", "ahp", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
+        "options": ["ar", "s", "hh", "ahp", "v", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__SHOP_RESET,
