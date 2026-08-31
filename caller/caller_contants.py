@@ -11,9 +11,11 @@ from discord import app_commands
 """
 
 PS_OPTIONS = {
-    "ps" : "https://www.roblox.com/share?code=24f0174ac4601144ba68fa7999fbda3b&type=Server",
-    "ps1" : "https://www.roblox.com/share?code=14bf45f0929a43478b4fd72f97970501&type=Server",
-    "tps" : "https://www.roblox.com/share?code=6b969a5026042e4abc0e106a24f39999&type=Server"
+    "ps" : "https://www.roblox.com/share?code=24f0174ac4601144ba68fa7999fbda3b&type=Server",        # mine
+    "ps1" : "https://www.roblox.com/share?code=14bf45f0929a43478b4fd72f97970501&type=Server",       # Blooi1
+    "ps3" : "https://www.roblox.com/share?code=67bbeb03de888945bdbc237e80b70e3d&type=Server",       # Adalia
+    "tps" : "https://www.roblox.com/share?code=6b969a5026042e4abc0e106a24f39999&type=Server",
+    "tps3": "https://www.roblox.com/share?code=fbadc9bfcfaffe4d96cba7dc50dcaa48&type=Server"        # Adalia
 }
 
 COOLDOWN = 2.0
