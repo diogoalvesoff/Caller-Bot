@@ -29,9 +29,9 @@ SHARED_CHANNEL_CHOICES = [
     app_commands.Choice(name=CHANNEL_NAMES["MEMES_CHANNEL"], value="MEMES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["COUNTING_CHANNEL"], value="COUNTING_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["ARQUIVES_CHANNEL"], value="ARQUIVES_CHANNEL"),
+    app_commands.Choice(name=CHANNEL_NAMES["STAIRWELL_CHANNEL"], value="STAIRWELL_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["HOTEL_HELL_CHANNEL"], value="HOTEL_HELL_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["A_HARD_PLACE_CHANNEL"], value="A_HARD_PLACE_CHANNEL"),
-    app_commands.Choice(name=CHANNEL_NAMES["A_1000_CHANNEL"], value="A_1000_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["HOTEL_BADGES_CHANNEL"], value="HOTEL_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["MINES_BADGES_CHANNEL"], value="MINES_BADGES_CHANNEL"),
     app_commands.Choice(name=CHANNEL_NAMES["OUTDOORS_BADGES_CHANNEL"], value="OUTDOORS_BADGES_CHANNEL"),
@@ -108,7 +108,7 @@ ROLES_WITH_PERMS_TO__USE_TALK = [
 PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__BADGES,
-        "options": ["ar", "hh", "ahp", "a", "r", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
+        "options": ["ar", "S", "hh", "ahp", "h", "m", "o", "b", "bm", "d", "gs", "c", "v", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__SHOP_RESET,
@@ -140,7 +140,8 @@ PING_CATEGORIES = [
 """
 
 _PERMS_GAMBLE_WORDS1 = ["perms", "permissions", "permes", "prems", "pers", "perm"]
-_PERMS_GAMBLE_WORDS2 = ["make", "rn", "now", "right now", "please", "me", "i", "gimme", "gimmie", "give", "perms", "pass", "mod", "admin", "administrator", "moderator"]
+# _PERMS_GAMBLE_WORDS2 = ["make", "rn", "now", "right now", "please", "me", "i", "gimme", "gimmie", "give", "perms", "pass", "mod", "admin", "administrator", "moderator"]
+_PERMS_GAMBLE_WORDS2 = []
 PATTERN_W1 = re.compile(r'\b(?:' + '|'.join(map(re.escape, _PERMS_GAMBLE_WORDS1)) + r')\b', re.IGNORECASE)
 PATTERN_W2 = re.compile(r'\b(?:' + '|'.join(map(re.escape, _PERMS_GAMBLE_WORDS2)) + r')\b', re.IGNORECASE)
 

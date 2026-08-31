@@ -319,7 +319,7 @@ async def talk (interaction: discord.Interaction, message: str, channel: app_com
     if not target_channel:
         await interaction.response.send_message("✖️ That channel doesn't exist ✖️", ephemeral=True)
         return
-    await target_channel.send(message)
+    await target_channel.send(message)t
     await interaction.response.send_message("✅ Message sent ✅", ephemeral=True)
 """
 
