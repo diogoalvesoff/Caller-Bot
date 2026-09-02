@@ -58,36 +58,50 @@ SHARED_CHANNEL_CHOICES = [
 """
 
 ROLES_WITH_PERMS_TO_USE__PING = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["HOSTER_ROLE_ID"],
     ROLE_IDS["PREMIUM_HOSTER_ROLE_ID"],
     ROLE_IDS["SANTA_CLAUS_ROLE_ID"],
     ROLE_IDS["LEAK_PING_MANAGER_ROLE_ID"],
     ROLE_IDS["SHOP_RESET_MANAGER_ROLE_ID"],
     ROLE_IDS["TOURNAMENT_MANAGER_ROLE_ID"],
-    ROLE_IDS["CHALLENGE_MANAGER_ROLE_ID"]
+    ROLE_IDS["CHALLENGE_MANAGER_ROLE_ID"],
+    ROLE_IDS["ADVISOR_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO_PING__BADGES = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["HOSTER_ROLE_ID"],
     ROLE_IDS["PREMIUM_HOSTER_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO_PING__SHOP_RESET = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["SHOP_RESET_MANAGER_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO_PING__GIVEAWAY = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["SANTA_CLAUS_ROLE_ID"],
     ROLE_IDS["PREMIUM_HOSTER_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO_PING__LEAK = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["LEAK_PING_MANAGER_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO_PING__TOURNAMENT = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["TOURNAMENT_MANAGER_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO_PING__CHALLENGE = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["CHALLENGE_MANAGER_ROLE_ID"]
+]
+ROLES_WITH_PERMS_TO_PING__QUICK_TIPS = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
+    ROLE_IDS["PREMIUM_HOSTER_ROLE_ID"],
+    ROLE_IDS["ADVISOR_ROLE_ID"]
 ]
 
 ROLES_WITH_PERMS_TO_USE__ACTIVITY = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["STAFF_TEAM_ROLE_ID"]
 ]
 
@@ -97,7 +111,7 @@ ROLES_WITH_PERMS_TO__ASK_FOR_PERMS = [
     ROLE_IDS["MOD_ROLE_ID"]
 ]
 ROLES_WITH_PERMS_TO__USE_TALK = [
-    ROLE_IDS["OWNER_ROLE_ID"]
+    ROLE_IDS["ADMIN_ROLE_ID"],
 ]
 
 
@@ -110,7 +124,7 @@ ROLES_WITH_PERMS_TO__USE_TALK = [
 PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__BADGES,
-        "options": ["ar", "s", "hh", "ahp", "v", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
+        "options": ["ar", "s", "hh", "ahp", "v", "cd", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__SHOP_RESET,
@@ -131,6 +145,10 @@ PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__CHALLENGE,
         "options": ["challenge"]
+    },
+    {
+        "allowed_roles": ROLES_WITH_PERMS_TO_PING__QUICK_TIPS,
+        "options": ["qt"]
     }
 ]
 

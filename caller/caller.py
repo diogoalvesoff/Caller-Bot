@@ -304,6 +304,8 @@ async def activity (interaction: discord.Interaction, reason: str = None):
     view = SetActivity(reason)
     await interaction.response.send_message(f"Press the button that best suits your purpose", view=view, ephemeral=True)
 
+
+
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO__USE_TALK)
 @client.tree.command(name="talk", description="talk", guild=GUILD_INFO["GUILD"])
