@@ -110,6 +110,13 @@ ROLES_WITH_PERMS_TO_USE__INTERVIEW = [
     ROLE_IDS["INTERVIEWER_ROLE_ID"]
 ]
 
+ROLES_WITH_PERMS_TO_USE__INVITE = [
+    ROLE_IDS["ADMIN_ROLE_ID"],
+    ROLE_IDS["HEAD_MOD_ROLE_ID"],
+    ROLE_IDS["MOD_ROLE_ID"],
+    ROLE_IDS["GREETER_ROLE_ID"]
+]
+
 ROLES_WITH_PERMS_TO__ASK_FOR_PERMS = [
     ROLE_IDS["ADMIN_ROLE_ID"],
     ROLE_IDS["HEAD_MOD_ROLE_ID"],
@@ -185,4 +192,14 @@ BUTTON_ACTIVITY_INACTIVE = {
     "label": "😴Set inactive😴",
     "style": discord.ButtonStyle.danger,
     "cid": "btn_activity_inactive"
+}
+BUTTON_INVITE_YES = {
+    "label": "✅Yes✅",
+    "style": discord.ButtonStyle.success,
+    "cid": "btn_invite_yes"
+}
+BUTTON_INVITE_NO = {
+    "label": "❌Yes❌",
+    "style": discord.ButtonStyle.danger,
+    "cid": "btn_invite_no"
 }

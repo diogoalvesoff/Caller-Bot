@@ -9,10 +9,10 @@ import aiosqlite
 from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, ROLE_NAMES, CHANNEL_IDS
 from caller.caller_contants import (
     PS_OPTIONS, COOLDOWN, MIN_INACTIVITY_TIME, GAMBLING_PERMS_CHANNELS, SHARED_CHANNEL_CHOICES,
-    ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO_USE__INTERVIEW, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS,
+    ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO_USE__INTERVIEW, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS, ROLES_WITH_PERMS_TO_USE__INVITE,
     PING_CATEGORIES,
     PATTERN_W1, PATTERN_W2,
-    BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE
+    BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE, BUTTON_INVITE_YES, BUTTON_INVITE_NO
 )
 
 
@@ -310,6 +310,7 @@ async def activity (interaction: discord.Interaction, reason: str = None):
 #                                                             INTERVIEW                                                         #
 #################################################################################################################################
 """
+
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
 @client.tree.command(name="interview", description="If you are an interviewer, use me to interview a user", guild=GUILD_INFO["GUILD"])
 async def interview (interaction: discord.Interaction, user: discord.Member):
@@ -355,6 +356,55 @@ async def finish_interview (interaction: discord.Interaction, user: discord.Memb
         print(f"Err. no Interview log channel")
         return
     await interview_log_channel.send(f"{interaction.user.name} finished interviewing {user.name}")
+
+
+"""
+#################################################################################################################################
+#                                                             INTERVIEW                                                         #
+#################################################################################################################################
+"""
+
+class Invite(discord.ui.View):
+    def __init__(self, inviter_name: str, guest_name: str):
+        super().__init__(timeout=60)
+        self.inviter_name = inviter_name
+        self.guest_name = guest_name
+
+    @discord.ui.button(label=BUTTON_INVITE_YES["label"], style=BUTTON_INVITE_YES["style"], custom_id=BUTTON_INVITE_YES["cid"])
+    async def btn_invite_yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+        for child in self.children:
+            child.disabled = True
+
+        manual_invite_log_channel = interaction.guild.get_channel(CHANNEL_IDS.get("MANUAL_INVITE_LOG_CHANNEL"))
+        if not manual_invite_log_channel:
+            await interaction.response.edit_message(content = f"❌ Something wrong happened - manual invite log channel missing ❌", view=self)
+            print("Err. Manual Invite Log Channel Missing")
+            return
+        await manual_invite_log_channel.send(f"### ✅ {interaction.user.name}: {self.inviter_name} invited {self.guest_name} ✅")
+        print(f"{interaction.user.name}: {self.inviter_name} invited {self.guest_name}")
+
+        await interaction.response.edit_message(
+            content = f"✅ Done - {self.inviter_name} invited {self.guest_name} ✅",
+            view=self
+        )
+    
+    @discord.ui.button(label=BUTTON_INVITE_NO["label"], style=BUTTON_INVITE_NO["style"], custom_id=BUTTON_INVITE_NO["cid"])
+    async def btn_invite_no(self, interaction: discord.Interaction, button: discord.ui.Button):
+        for child in self.children:
+            child.disabled = True
+
+        await interaction.response.edit_message(
+            content = f"❌ Operation Cancelled ❌",
+            view=self
+        )
+
+
+@app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INVITE)
+@client.tree.command(name="invite", description="if you are a mod, admin or greeter, use me to finish manually log invites", guild=GUILD_INFO["GUILD"])
+async def invite (interaction: discord.Interaction, inviter: discord.Member, guest: discord.Member):
+    view = Invite(inviter.name, guest.name)
+    await interaction.response.send_message(f"Are you sure that {inviter.name} invited {guest.name}?", view=view, ephemeral=True)
+
 
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO__USE_TALK)
