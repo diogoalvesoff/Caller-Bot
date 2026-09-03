@@ -404,7 +404,7 @@ class Invite(discord.ui.View):
 async def invite (interaction: discord.Interaction, inviter: discord.Member, guest: discord.Member):
 
     if inviter.id == guest.id:
-        await interaction.response.send_message("❌ You can't invite yourself ❌")
+        await interaction.response.send_message("❌ You can't invite yourself ❌", ephemeral=True)
         return
     view = Invite(inviter.name, guest.name)
     await interaction.response.send_message(f"Are you sure that {inviter.name} invited {guest.name}?", view=view, ephemeral=True)
