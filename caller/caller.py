@@ -323,6 +323,7 @@ async def interview (interaction: discord.Interaction, user: discord.Member):
         return
     await user.add_roles(interviewee_role)
     await interaction.response.send_message(f"✅ The user was added to the interview forum ✅", ephemeral=True)
+    print(f"{interaction.user.name} is now interviewings {user.name}")
 
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
 @client.tree.command(name="finish_interview", description="if you are an interviewer, use me to finish a interview", guild=GUILD_INFO["GUILD"])
@@ -337,6 +338,7 @@ async def finish_interview (interaction: discord.Interaction, user: discord.Memb
         return
     await user.remove_roles(interviewee_role)
     await interaction.response.send_message(f"✅ The user was removed from the interview forum ✅", ephemeral=True)
+    print(f"{interaction.user.name} finished interviewing {user.name}")
 
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO__USE_TALK)
