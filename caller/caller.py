@@ -9,7 +9,7 @@ import aiosqlite
 from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, ROLE_NAMES, CHANNEL_IDS
 from caller.caller_contants import (
     PS_OPTIONS, COOLDOWN, MIN_INACTIVITY_TIME, GAMBLING_PERMS_CHANNELS, SHARED_CHANNEL_CHOICES,
-    ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_PING__BADGES, ROLES_WITH_PERMS_TO_PING__SHOP_RESET, ROLES_WITH_PERMS_TO_PING__GIVEAWAY, ROLES_WITH_PERMS_TO_PING__LEAK, ROLES_WITH_PERMS_TO_PING__TOURNAMENT, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO_PING__CHALLENGE, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS,
+    ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO_USE__INTERVIEW, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS,
     PING_CATEGORIES,
     PATTERN_W1, PATTERN_W2,
     BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE
@@ -305,6 +305,38 @@ async def activity (interaction: discord.Interaction, reason: str = None):
     await interaction.response.send_message(f"Press the button that best suits your purpose", view=view, ephemeral=True)
 
 
+"""
+#################################################################################################################################
+#                                                             INTERVIEW                                                         #
+#################################################################################################################################
+"""
+@app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
+@client.tree.command(name="interview", description="If you are an interviewer, use me to interview a user", guild=GUILD_INFO["GUILD"])
+async def interview (interaction: discord.Interaction, user: discord.member):
+    interviewee_role = interaction.guild.get_role(ROLE_IDS.get("interviewee"))
+    if not interviewee_role:
+        await interaction.response.send_message(f"❌ Something went wrong - No interview role ❌", ephemeral=True)
+        print ("Err: No interviewee role")
+        return
+    if interviewee_role in interaction.user.roles:
+        await interaction.response.send_message(f"❌ The user is already being interviewed ❌")
+        return
+    await interaction.user.add_roles(interviewee_role)
+    await interaction.response.send_message(f"✅ The user was added to the interview forum ✅", ephemeral=True)
+
+@app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
+@client.tree.command(name="finish interview", description="if you are an interviewer, use me to finish a interview", guild=GUILD_INFO["GUILD"])
+async def finish_interview (interaction: discord.Interaction, user: discord.member):
+    interviewee_role = interaction.guild.get_role(ROLE_IDS.get("interviewee"))
+    if not interviewee_role:
+        await interaction.response.send_message(f"❌ Something went wrong - No interview role ❌", ephemeral=True)
+        print ("Err: No interviewee role")
+        return
+    if interviewee_role not in interaction.user.roles:
+        await interaction.response.send_message(f"❌ The user is not in an interview ❌")
+        return
+    await interaction.user.remove_roles(interviewee_role)
+    await interaction.response.send_message(f"✅ The user was removed from the interview forum ✅", ephemeral=True)
 
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO__USE_TALK)
