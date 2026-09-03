@@ -320,6 +320,7 @@ async def interview (interaction: discord.Interaction, user: discord.Member):
         return
     if interaction.user.id == user.id:
         await interaction.response.send_message(f"❌ You can't interview yourself ❌", ephemeral=True)
+        return
     if interviewee_role in user.roles:
         await interaction.response.send_message(f"❌ The user is already being interviewed ❌", ephemeral=True)
         return
@@ -330,7 +331,7 @@ async def interview (interaction: discord.Interaction, user: discord.Member):
     if not interview_log_channel:
         print(f"Err. no Interview log channel")
         return
-    interview_log_channel.send(f"{interaction.user.name} is now iinterviewing {user.name}")
+    await interview_log_channel.send(f"{interaction.user.name} is now interviewing {user.name}")
 
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
 @client.tree.command(name="finish_interview", description="if you are an interviewer, use me to finish a interview", guild=GUILD_INFO["GUILD"])
@@ -342,16 +343,18 @@ async def finish_interview (interaction: discord.Interaction, user: discord.Memb
         return
     if interaction.user.id == user.id:
         await interaction.response.send_message(f"❌ You can't interview yourself ❌", ephemeral=True)
+        return
     if interviewee_role not in user.roles:
         await interaction.response.send_message(f"❌ The user is not in an interview ❌", ephemeral=True)
         return
     await user.remove_roles(interviewee_role)
     await interaction.response.send_message(f"✅ The user was removed from the interview forum ✅", ephemeral=True)
     print(f"{interaction.user.name} finished interviewing {user.name}")
+    interview_log_channel = interaction.guild.get_channel(CHANNEL_IDS.get("INTERVIEW_LOG_CHANNEL"))
     if not interview_log_channel:
         print(f"Err. no Interview log channel")
         return
-    interview_log_channel.send(f"{interaction.user.name} finished interviewing {user.name}")
+    await interview_log_channel.send(f"{interaction.user.name} finished interviewing {user.name}")
 
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO__USE_TALK)
