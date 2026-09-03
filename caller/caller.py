@@ -402,6 +402,10 @@ class Invite(discord.ui.View):
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INVITE)
 @client.tree.command(name="invite", description="if you are a mod, admin or greeter, use me to finish manually log invites", guild=GUILD_INFO["GUILD"])
 async def invite (interaction: discord.Interaction, inviter: discord.Member, guest: discord.Member):
+
+    if inviter.id == guest.id:
+        await interaction.response.send_message("❌ You can't invite yourself ❌")
+        return
     view = Invite(inviter.name, guest.name)
     await interaction.response.send_message(f"Are you sure that {inviter.name} invited {guest.name}?", view=view, ephemeral=True)
 
