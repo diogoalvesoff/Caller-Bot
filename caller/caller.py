@@ -312,30 +312,30 @@ async def activity (interaction: discord.Interaction, reason: str = None):
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
 @client.tree.command(name="interview", description="If you are an interviewer, use me to interview a user", guild=GUILD_INFO["GUILD"])
-async def interview (interaction: discord.Interaction, user: discord.member):
+async def interview (interaction: discord.Interaction, user: discord.Member):
     interviewee_role = interaction.guild.get_role(ROLE_IDS.get("interviewee"))
     if not interviewee_role:
         await interaction.response.send_message(f"❌ Something went wrong - No interview role ❌", ephemeral=True)
         print ("Err: No interviewee role")
         return
-    if interviewee_role in interaction.user.roles:
-        await interaction.response.send_message(f"❌ The user is already being interviewed ❌")
+    if interviewee_role in user.roles:
+        await interaction.response.send_message(f"❌ The user is already being interviewed ❌", ephemeral=True)
         return
-    await interaction.user.add_roles(interviewee_role)
+    await user.add_roles(interviewee_role)
     await interaction.response.send_message(f"✅ The user was added to the interview forum ✅", ephemeral=True)
 
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
-@client.tree.command(name="finish interview", description="if you are an interviewer, use me to finish a interview", guild=GUILD_INFO["GUILD"])
-async def finish_interview (interaction: discord.Interaction, user: discord.member):
+@client.tree.command(name="finish_interview", description="if you are an interviewer, use me to finish a interview", guild=GUILD_INFO["GUILD"])
+async def finish_interview (interaction: discord.Interaction, user: discord.Member):
     interviewee_role = interaction.guild.get_role(ROLE_IDS.get("interviewee"))
     if not interviewee_role:
         await interaction.response.send_message(f"❌ Something went wrong - No interview role ❌", ephemeral=True)
         print ("Err: No interviewee role")
         return
-    if interviewee_role not in interaction.user.roles:
-        await interaction.response.send_message(f"❌ The user is not in an interview ❌")
+    if interviewee_role not in user.roles:
+        await interaction.response.send_message(f"❌ The user is not in an interview ❌", ephemeral=True)
         return
-    await interaction.user.remove_roles(interviewee_role)
+    await user.remove_roles(interviewee_role)
     await interaction.response.send_message(f"✅ The user was removed from the interview forum ✅", ephemeral=True)
 
 """
