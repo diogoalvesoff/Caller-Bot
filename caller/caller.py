@@ -380,7 +380,7 @@ class Invite(discord.ui.View):
             await interaction.response.edit_message(content = f"❌ Something wrong happened - manual invite log channel missing ❌", view=self)
             print("Err. Manual Invite Log Channel Missing")
             return
-        await manual_invite_log_channel.send(f"### ✅ {interaction.user.name}: {self.inviter_name} invited {self.guest_name} ✅")
+        await manual_invite_log_channel.send(f"✅ **{interaction.user.name}**: {self.inviter_name} invited {self.guest_name} ✅")
         print(f"{interaction.user.name}: {self.inviter_name} invited {self.guest_name}")
 
         await interaction.response.edit_message(
