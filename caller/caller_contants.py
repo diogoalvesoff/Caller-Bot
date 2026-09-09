@@ -149,7 +149,7 @@ PING_CATEGORIES = [
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__GIVEAWAY,
-        "options": ["g"]
+        "options": ["g", "ar", "s", "hh", "ahp", "v", "cd", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__LEAK,
