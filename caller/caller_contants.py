@@ -141,7 +141,7 @@ ROLES_WITH_PERMS_TO__USE_TALK = [
 PING_CATEGORIES = [
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__BADGES,
-        "options": ["ar", "s", "hh", "ahp", "v", "cd", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
+        "options": ["ar", "hc", "s", "hh", "ahp", "v", "cd", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__SHOP_RESET,
@@ -149,7 +149,7 @@ PING_CATEGORIES = [
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__GIVEAWAY,
-        "options": ["g", "ar", "s", "hh", "ahp", "v", "cd", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
+        "options": ["g", "ar", "hc", "s", "hh", "ahp", "v", "cd", "lo", "c", "d", "gs", "br", "p", "ff", "mr", "sb", "sj", "lb", "sc", "bm", "h", "m", "o", "b", "th", "f", "kg"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__LEAK,

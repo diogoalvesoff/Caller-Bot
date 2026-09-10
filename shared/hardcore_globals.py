@@ -34,6 +34,7 @@ ROLE_IDS = {
     "RESTING_ROLE_ID" : 1512632251517763604,
     "quick tips": 1544717670774087801, "quicktips": 1544717670774087801, "qt": 1544717670774087801,
     "archives": 1537602342986321920, "ar": 1537602342986321920,
+    "honcho": 1547645309876830228, "hc": 1547645309876830228,
     "stairwell": 1543438793473003520, "s": 1543438793473003520,
     "hotel hell": 1480063127864475832, "hotelhell": 1480063127864475832, "hh": 1480063127864475832,
     "a hard place": 1480065104958455970, "ahardplace": 1480065104958455970, "ahp": 1480065104958455970,
@@ -70,6 +71,7 @@ ROLE_IDS = {
 ROLE_NAMES = {
     "quick tips": "💡 | Quick-Tips ᵖⁱⁿᵍ", "quicktips": "💡 | Quick-Tips ᵖⁱⁿᵍ", "qt": "💡 | Quick-Tips ᵖⁱⁿᵍ",
     "archives": "📚 | Archives ᵖⁱⁿᵍ", "ar": "📚 | Archives ᵖⁱⁿᵍ",
+    "honcho": "◾ | Honcho ᵖⁱⁿᵍ", "hc": "◾ | Honcho ᵖⁱⁿᵍ",
     "stairwell": "🪜 | Stairwell ᵖⁱⁿᵍ", "s": "🪜 | Stairwell ᵖⁱⁿᵍ",
     "hotel hell": "👹 | HH ᵖⁱⁿᵍ", "hotelhell": "👹 | HH ᵖⁱⁿᵍ", "hh": "👹 | HH ᵖⁱⁿᵍ",
     "a hard place": "🪨 | AHP ᵖⁱⁿᵍ", "ahardplace": "🪨 | AHP ᵖⁱⁿᵍ", "ahp": "🪨 | AHP ᵖⁱⁿᵍ",
