@@ -4,7 +4,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
-import aiosqlite
 
 from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, ROLE_NAMES, CHANNEL_IDS
 from caller.caller_contants import (
@@ -14,21 +13,10 @@ from caller.caller_contants import (
     PATTERN_W1, PATTERN_W2,
     BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE, BUTTON_INVITE_YES, BUTTON_INVITE_NO
 )
-
+from caller import db_handler
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
-
-async def setup_db():
-        async with aiosqlite.connect("activity.db") as db:
-            await db.execute('''
-                CREATE TABLE IF NOT EXISTS inactives (
-                    user_id INTEGER PRIMARY KEY,
-                    reason TEXT
-                )
-            ''')
-            await db.commit()
-
 
 class Client (commands.Bot):
     def __init__(self):
@@ -40,9 +28,12 @@ class Client (commands.Bot):
         super().__init__(command_prefix="!", intents=intents)
         self.gamble_cooldown = commands.CooldownMapping.from_cooldown(1, COOLDOWN, commands.BucketType.user)
         self.last_active_times = {}                                 # Stored the last time inactive users talked
+    
+    async def setup_hook(self):
+        await db_handler.create_pool()
+        await db_handler.setup_db_tables()
 
     async def on_ready(self):
-        await setup_db()
         print(f'Logged on as {self.user}')
         try:
             synced = await self.tree.sync(guild=GUILD_INFO["GUILD"])
@@ -119,16 +110,16 @@ class Client (commands.Bot):
                 
                 mentioned_inactives = []
                 reasons = []
-                async with aiosqlite.connect("activity.db") as db:
-                    for user in message.mentions:
-                        if isinstance(user, discord.Member) and resting_role in user.roles:
-                            async with db.execute("SELECT reason FROM inactives WHERE user_id = ?", (user.id,)) as cursor:
-                                time_inactive_user_sent_last_message = self.last_active_times.get(user.id, message.created_at.timestamp() - (MIN_INACTIVITY_TIME * 2))
-                                if message.created_at.timestamp() - time_inactive_user_sent_last_message > MIN_INACTIVITY_TIME:
-                                    row = await cursor.fetchone()
-                                    reason = row[0] if row else "No reason"
-                                    mentioned_inactives.append(user.display_name)
-                                    reasons.append(reason)
+
+                for user in message.mentions:
+                    if isinstance(user, discord.Member) and resting_role in user.roles:
+                        time_inactive_user_sent_last_message = self.last_active_times.get(user.id, message.created_at.timestamp() - (MIN_INACTIVITY_TIME * 2))
+                        if message.created_at.timestamp() - time_inactive_user_sent_last_message > MIN_INACTIVITY_TIME:
+                            reason = await db_handler.get_inactive_reason(user.id)
+                            reason_text = reason if reason else "No reason"
+                            mentioned_inactives.append(user.display_name)
+                            reasons.append(reason)
+
                 if len(mentioned_inactives) == 1:
                     if reasons[0] == "No reason":
                         await message.reply(f"**Sorry, {mentioned_inactives[0]} is inactive 😴! **")
@@ -246,9 +237,7 @@ class SetActivity(discord.ui.View):
         if resting_role in interaction.user.roles:
             await interaction.user.remove_roles(resting_role)
 
-        async with aiosqlite.connect("activity.db") as db:
-            await db.execute("DELETE FROM inactives WHERE user_id = ?", (interaction.user.id,))
-            await db.commit()
+        await db_handler.remove_inactive(interaction.user.id)
 
         for child in self.children:
             child.disabled = True
@@ -271,9 +260,7 @@ class SetActivity(discord.ui.View):
         if resting_role not in interaction.user.roles:
             await interaction.user.add_roles(resting_role)
 
-        async with aiosqlite.connect("activity.db") as db:
-            await db.execute("REPLACE INTO inactives (user_id, reason) VALUES (?, ?)", (interaction.user.id, self.reason))
-            await db.commit()
+        await db_handler.set_inactive(interaction.user.id, self.reason)
 
         for child in self.children:
             child.disabled = True

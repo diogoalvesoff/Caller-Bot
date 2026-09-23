@@ -1,4 +1,3 @@
-import sqlite3
 from shared.hardcore_globals import ROLE_IDS, CHANNEL_IDS, CHANNEL_NAMES
 import re
 import discord
