@@ -71,7 +71,7 @@ ROLE_IDS = {
 ROLE_NAMES = {
     "quick tips": "💡 | Quick-Tips ᵖⁱⁿᵍ", "quicktips": "💡 | Quick-Tips ᵖⁱⁿᵍ", "qt": "💡 | Quick-Tips ᵖⁱⁿᵍ",
     "archives": "📚 | Archives ᵖⁱⁿᵍ", "ar": "📚 | Archives ᵖⁱⁿᵍ",
-    "honcho": "◾ | Honcho ᵖⁱⁿᵍ", "hc": "◾ | Honcho ᵖⁱⁿᵍ",
+    "honcho": "⬛ | Honcho ᵖⁱⁿᵍ", "hc": "⬛ | Honcho ᵖⁱⁿᵍ",
     "stairwell": "🪜 | Stairwell ᵖⁱⁿᵍ", "s": "🪜 | Stairwell ᵖⁱⁿᵍ",
     "hotel hell": "👹 | HH ᵖⁱⁿᵍ", "hotelhell": "👹 | HH ᵖⁱⁿᵍ", "hh": "👹 | HH ᵖⁱⁿᵍ",
     "a hard place": "🪨 | AHP ᵖⁱⁿᵍ", "ahardplace": "🪨 | AHP ᵖⁱⁿᵍ", "ahp": "🪨 | AHP ᵖⁱⁿᵍ",
