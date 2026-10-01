@@ -160,7 +160,7 @@ PING_CATEGORIES = [
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__CHALLENGE,
-        "options": ["challenge"]
+        "options": ["ch"]
     },
     {
         "allowed_roles": ROLES_WITH_PERMS_TO_PING__QUICK_TIPS,
@@ -206,4 +206,14 @@ BUTTON_INVITE_NO = {
     "label": "❌Yes❌",
     "style": discord.ButtonStyle.danger,
     "cid": "btn_invite_no"
+}
+BUTTON_ROLE_SYSTEM_YES = {
+    "label": "🌚Use New Role System🌚",
+    "style": discord.ButtonStyle.success,
+    "cid": "btn_role_system_yes"
+}
+BUTTON_ROLE_SYSTEM_NO = {
+    "label": "👴🏼Use Old Role System👴🏼",
+    "style": discord.ButtonStyle.danger,
+    "cid": "btn_role_system_no"
 }

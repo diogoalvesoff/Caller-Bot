@@ -28,7 +28,10 @@ async def setup_db_tables():
         CREATE TABLE IF NOT EXISTS inactives (
             user_id TEXT PRIMARY KEY,
             reason TEXT
-        )
+        );
+        CREATE TABLE IF NOT EXISTS role_system (
+            user_id TEXT PRIMARY KEY
+        );
     """
     async with pool.acquire() as conn:
         await conn.execute(query_inactives)
@@ -52,5 +55,27 @@ async def set_inactive(user_id: int, reason: str):
 
 async def remove_inactive(user_id: int):
     query = "DELETE FROM inactives WHERE user_id = $1"
+    async with pool.acquire() as conn:
+        await conn.execute(query, str(user_id))
+
+
+
+async def get_role_system (user_id: int) -> bool:
+    query = "SELECT EXISTS (SELECT 1 FROM role_system WHERE user_Id = $1)"
+    async with pool.acquire() as connection:
+        exists = await connection.fetchval(query, str(user_id))
+        return exists
+
+async def set_role_system(user_id: int):
+    query = """
+        INSERT INTO role_system (user_id)
+        VALUES ($1)
+        ON CONFLICT (user_id) DO NOTHING
+    """
+    async with pool.acquire() as conn:
+        await conn.execute(query, str(user_id))
+
+async def remove_role_system(user_id: int):
+    query = "DELETE FROM role_system WHERE user_id = $1"
     async with pool.acquire() as conn:
         await conn.execute(query, str(user_id))

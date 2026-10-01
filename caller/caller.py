@@ -5,13 +5,13 @@ from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, ROLE_NAMES, CHANNEL_IDS
+from shared.hardcore_globals import GUILD_INFO, ROLE_IDS, MAJOR_ROLE_GROUP, ROLE_NAMES, CHANNEL_IDS
 from caller.caller_contants import (
     PS_OPTIONS, COOLDOWN, MIN_INACTIVITY_TIME, GAMBLING_PERMS_CHANNELS, SHARED_CHANNEL_CHOICES,
     ROLES_WITH_PERMS_TO_USE__PING, ROLES_WITH_PERMS_TO_USE__ACTIVITY, ROLES_WITH_PERMS_TO_USE__INTERVIEW, ROLES_WITH_PERMS_TO__USE_TALK, ROLES_WITH_PERMS_TO__ASK_FOR_PERMS, ROLES_WITH_PERMS_TO_USE__INVITE,
     PING_CATEGORIES,
     PATTERN_W1, PATTERN_W2,
-    BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE, BUTTON_INVITE_YES, BUTTON_INVITE_NO
+    BUTTON_ACTIVITY_ACTIVE, BUTTON_ACTIVITY_INACTIVE, BUTTON_INVITE_YES, BUTTON_INVITE_NO, BUTTON_ROLE_SYSTEM_YES, BUTTON_ROLE_SYSTEM_NO
 )
 from caller import db_handler
 
@@ -138,6 +138,22 @@ class Client (commands.Bot):
                 print (f"{message.author.display_name} shook hands with {user.display_name}")
                 await message.channel.send(f"🤝 {message.author.mention} shook hands with {user.mention}")
 
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        if before.roles == after.roles:
+            return
+        changed_roles = set(before.roles) ^ set(after.roles)
+        changed_roles_ids = {r.id for r in changed_roles}
+
+        all_tracked_ids = set()
+        for roles_dict in MAJOR_ROLE_GROUP.values():
+            all_tracked_ids.update(roles_dict.values())
+
+        if not changed_roles_ids.intersection(all_tracked_ids):
+            return
+        
+        await sync_role_separators(after)
+        
+
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
             return
@@ -152,7 +168,47 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
         return
     print(f"E: '{interaction.command.name}' failed: {error}")
     if not interaction.response.is_done():
-        await interaction.response.send_message(f"I think smth went wrong... role <@&{ROLE_IDS.get('ADMIN_ROLE_ID')}>")
+        await interaction.response.send_message(f"I think smth went wrong... <@&{ROLE_IDS.get('ADMIN_ROLE_ID')}>")
+
+
+async def sync_role_separators(member: discord.Member):
+    # Vai buscar a preferência à BD
+    uses_new_system = await db_handler.get_role_system(member.id)
+    user_role_ids = {role.id for role in member.roles}
+    
+    roles_to_add = []
+    roles_to_remove = []
+
+    for group_name, roles_dict in MAJOR_ROLE_GROUP.items():
+        separator_key = group_name.replace("_ROLES", "_ROLE_ID")
+        separator_id = roles_dict.get(separator_key)
+
+        if not separator_id:
+            continue
+
+        separator_role = member.guild.get_role(separator_id)
+        if not separator_role:
+            continue
+
+        if uses_new_system:
+            child_ids = [r_id for key, r_id in roles_dict.items() if r_id != separator_id]
+            has_any_child = any(child_id in user_role_ids for child_id in child_ids)
+            
+            if has_any_child and separator_id not in user_role_ids:
+                roles_to_add.append(separator_role)
+            elif not has_any_child and separator_id in user_role_ids:
+                roles_to_remove.append(separator_role)
+        else:
+            if separator_id in user_role_ids:
+                roles_to_remove.append(separator_role)
+    
+    try:
+        if roles_to_add:
+            await member.add_roles(*roles_to_add, reason="Role Layout: Separators activated/updated")
+        if roles_to_remove:
+            await member.remove_roles(*roles_to_remove, reason="Role Layout: Separators deactivated/cleaned")
+    except discord.Forbidden:
+        print(f"Err: The bot doesn't have permissions to administrate roles to user {member.name}.")
 
 
 """
@@ -301,7 +357,7 @@ async def activity (interaction: discord.Interaction, reason: str = None):
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
 @client.tree.command(name="interview", description="If you are an interviewer, use me to interview a user", guild=GUILD_INFO["GUILD"])
 async def interview (interaction: discord.Interaction, user: discord.Member):
-    interviewee_role = interaction.guild.get_role(ROLE_IDS.get("interviewee"))
+    interviewee_role = interaction.guild.get_role(ROLE_IDS.get("INTERVIEWEE_ROLE_ID"))
     if not interviewee_role:
         await interaction.response.send_message(f"❌ Something went wrong - No interview role ❌", ephemeral=True)
         print ("Err: No interviewee role")
@@ -324,7 +380,7 @@ async def interview (interaction: discord.Interaction, user: discord.Member):
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO_USE__INTERVIEW)
 @client.tree.command(name="finish_interview", description="if you are an interviewer, use me to finish a interview", guild=GUILD_INFO["GUILD"])
 async def finish_interview (interaction: discord.Interaction, user: discord.Member):
-    interviewee_role = interaction.guild.get_role(ROLE_IDS.get("interviewee"))
+    interviewee_role = interaction.guild.get_role(ROLE_IDS.get("INTERVIEWEE_ROLE_ID"))
     if not interviewee_role:
         await interaction.response.send_message(f"❌ Something went wrong - No interview role ❌", ephemeral=True)
         print ("Err: No interviewee role")
@@ -396,6 +452,58 @@ async def invite (interaction: discord.Interaction, inviter: discord.Member, gue
     view = Invite(inviter.name, guest.name)
     await interaction.response.send_message(f"Are you sure that {inviter.name} invited {guest.name}?", view=view, ephemeral=True)
 
+    
+"""
+#################################################################################################################################
+#                                                           ROLE SYSTEM                                                         #
+#################################################################################################################################
+"""
+
+class RoleSystem(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=60)
+        
+    @discord.ui.button(label=BUTTON_ROLE_SYSTEM_YES["label"], style=BUTTON_ROLE_SYSTEM_YES["style"], custom_id=BUTTON_ROLE_SYSTEM_YES["cid"])
+    async def btn_role_system_yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+        for child in self.children:
+            child.disabled = True
+        
+        await interaction.response.edit_message(
+            content="⏳ Processing your request... please wait.",
+            view=self
+        )
+
+        await db_handler.set_role_system(interaction.user.id)
+        await sync_role_separators(interaction.user)
+
+        await interaction.edit_original_response(
+            content = f"✅ Done. You're using the new role system",
+            view=self
+        )
+
+    @discord.ui.button(label=BUTTON_ROLE_SYSTEM_NO["label"], style=BUTTON_ROLE_SYSTEM_NO["style"], custom_id=BUTTON_ROLE_SYSTEM_NO["cid"])
+    async def btn_role_system_no(self, interaction: discord.Interaction, button: discord.ui.Button):
+        for child in self.children:
+            child.disabled = True
+            
+        await interaction.response.edit_message(
+            content="⏳ Processing your request... please wait.",
+            view=self
+        )
+        
+        await db_handler.remove_role_system(interaction.user.id)
+        await sync_role_separators(interaction.user)
+
+        await interaction.edit_original_response(
+            content = f"✅ Done. You're using the old role system",
+            view=self
+        )
+
+@client.tree.command(name="role_system", description="Use me to choose between the old and the new role system", guild=GUILD_INFO["GUILD"])
+async def role_system (interaction: discord.Interaction):
+    view = RoleSystem()
+    await interaction.response.send_message(f"Press the button that best suits your purpose", view=view, ephemeral=True)
+
 
 """
 @app_commands.checks.has_any_role(*ROLES_WITH_PERMS_TO__USE_TALK)
@@ -427,3 +535,6 @@ if __name__ == "__main__":
     main()
 
     ROLES_WITH_PERMS_TO__ASK_FOR_PERMS
+
+
+
