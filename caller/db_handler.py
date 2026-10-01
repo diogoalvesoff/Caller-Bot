@@ -37,7 +37,7 @@ async def setup_db_tables():
 async def get_inactive_reason(user_id: int) -> str:
     query = "SELECT reason FROM inactives WHERE user_id = $1"
     async with pool.acquire() as conn:
-        record = await conn.fecthrow(query, str(user_id))
+        record = await conn.fetchrow(query, str(user_id))
         return record['reason'] if record else None
 
 async def set_inactive(user_id: int, reason: str):
