@@ -253,7 +253,7 @@ async def ping(interaction: discord.Interaction, role: str):
     has_perms = False
     
     for category in PING_CATEGORIES:
-        category_target_ids = [ROLE_IDS[opt] for opt in category["options"]]
+        category_target_ids = [ROLE_IDS[opt] for opt in category["options"] if opt in ROLE_IDS]
         
         if target_role_id in category_target_ids:
             if any(r_id in category["allowed_roles"] for r_id in user_role_ids):
