@@ -14,7 +14,7 @@ PS_OPTIONS = {
     "ps1" : "https://www.roblox.com/share?code=14bf45f0929a43478b4fd72f97970501&type=Server",       # Blooi1
     "ps2" : "https://www.roblox.com/share?code=d51c64e3c246f64a9e4a86b29fe52887&type=Server",       # Chiruno
     "ps3" : "https://www.roblox.com/share?code=67bbeb03de888945bdbc237e80b70e3d&type=Server",       # Adalia
-    "ps4" : "https://www.roblox.com/share?code=2b80c165255ef34ea399f5b2c6dafd49&type=Server"        # jaden_317
+    "ps4" : "https://www.roblox.com/share?code=2b80c165255ef34ea399f5b2c6dafd49&type=Server",        # jaden_317
     #ps5
     #tps
     #tps1
